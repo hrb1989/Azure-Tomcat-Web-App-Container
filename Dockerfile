@@ -9,6 +9,9 @@ USER root
 RUN apt-get update
 RUN apt-get -y upgrade
 RUN apt-get install -y curl 
+# The following ENV and ln is to provide automated answer to Location and Timezone to tzdata, while installing apache2
+ENV TZ=Asia/Kolkata
+RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 RUN apt-get install -y apache2
 
 # Make a known working directory for downloads
@@ -17,13 +20,7 @@ RUN mkdir /usr/local/downloadtemp
 ########################################
 # Install Java
 ########################################
-COPY jdk-9.0.4_linux-x64_bin.tar.gz /usr/local/downloadtemp/jdk-9.0.4.tar.gz
-RUN tar xvzf /usr/local/downloadtemp/jdk-9.0.4.tar.gz -C /usr/local
-RUN rm /usr/local/downloadtemp/jdk-9.0.4.tar.gz
-
-# Set Java environment variablees
-ENV JAVA_HOME /usr/local/jdk-9.0.4
-ENV PATH ${PATH}:${JAVA_HOME}/bin
+RUN apt-get install -y openjdk-11-jdk
 
 ########################################
 # Install and Configure Tomcat 
